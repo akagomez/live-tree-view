@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 
-// Create a new WebSocket.
-// var socket = new WebSocket('wss://echo.websocket.org');
-var socket = new WebSocket(`wss://${window.location.host}/ws`);
+// TODO: Use a env variable that represents secure/insecure
+// socket connections
+var protocol = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
+var socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+
+// TODO: Remove this once the interface is wired up
 window.socket = socket;
 
 // Handle any errors that occur.
