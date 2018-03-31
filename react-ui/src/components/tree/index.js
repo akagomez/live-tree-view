@@ -31,7 +31,7 @@ export default ({
               <h5>
                 Create Factory Node
               </h5>
-              <form action="javascript: void(0)">
+              <form>
                 <label htmlFor="factoryName">Name</label>
                 <input type="text" placeholder="Factory Name" id="factoryName" />
               </form>
