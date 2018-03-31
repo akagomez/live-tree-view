@@ -2,7 +2,25 @@ import React from 'react';
 import './style.css';
 
 export default () => (
-  <h1>
-    Hello world!
-  </h1>
+  <div className="tree">
+    <ul>
+      <li>
+        Tree Root
+
+        <ul>
+          <li>
+            Factory Node
+
+            <ul>
+              <li>
+                Child Number
+              </li>
+            </ul>
+
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+  </div>
 );

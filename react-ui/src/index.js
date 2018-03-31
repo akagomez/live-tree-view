@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import Header from './components/header';
 import Tree from './components/tree';
 
 import 'milligram/dist/milligram.css'
@@ -32,6 +34,7 @@ ReactDOM.render(
   <div className="container">
     <div className="row">
       <div className="column">
+        <Header />
         <Tree />
       </div>
     </div>

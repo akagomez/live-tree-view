@@ -1,0 +1,9 @@
+.header {
+  padding: 1em 0;
+}
+
+.header .author {
+  display: inline-block;
+  font-size: 0.5em;
+  opacity: 0.5;
+}
