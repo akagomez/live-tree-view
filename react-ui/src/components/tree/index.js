@@ -8,7 +8,8 @@ import './style.css';
 
 export default ({
   createFactoryFormIsVisible,
-  onPromptCreateFactoryForm
+  onPromptCreateFactoryForm,
+  onCancelFactoryCreate,
 }) => (
   <div className="tree">
 
@@ -29,8 +30,8 @@ export default ({
         </button>
 
         {createFactoryFormIsVisible &&
-              <CreateFactoryForm />
-
+          <CreateFactoryForm
+            onCancelFactoryCreate={onCancelFactoryCreate} />
         }
 
         <ul>

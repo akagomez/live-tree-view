@@ -38,7 +38,13 @@ socket.onclose = function(event) {
 const state = store({
   ui: {
     createFactoryForm: {
-      isVisible: false
+      isVisible: true,
+      show () {
+        this.isVisible = true
+      },
+      hide () {
+        this.isVisible = false;
+      }
     }
   },
   tree: {
@@ -62,9 +68,8 @@ const App = view(() => (
         <Header />
         <Tree
           createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
-          onPromptCreateFactoryForm={() => {
-            state.ui.createFactoryForm.isVisible = true
-          }}
+          onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
+          onCancelFactoryCreate={() => state.ui.createFactoryForm.hide()}
         />
       </div>
     </div>

@@ -2,8 +2,17 @@ import React from 'react';
 
 import './style.css';
 
-export default () => (
-  <form className="create-factory-form">
+export default ({
+  onCancelFactoryCreate,
+  onCreateFactoryNode
+}) => (
+  <form
+    className="create-factory-form"
+    onSubmit={(ev) => {
+      ev.preventDefault();
+      return false;
+    }}
+  >
     <fieldset>
       <p>
         Create a factory node.
@@ -29,6 +38,27 @@ export default () => (
           <label htmlFor="upperBound">Range End:</label>
           <input type="number" min="1" placeholder="999" id="upperBound" />
         </div>
+      </div>
+
+      <div className="actions">
+        <a
+          href="#"
+          className="cancel-button"
+          onClick={(ev) => {
+            ev.preventDefault()
+            onCancelFactoryCreate()
+          }}
+        >
+          Cancel
+        </a>
+
+        {' '}
+
+        <button
+          onClick={onCreateFactoryNode}
+        >
+          Create Factory Node
+        </button>
       </div>
 
     </fieldset>
