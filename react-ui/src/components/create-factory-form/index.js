@@ -26,7 +26,7 @@ export default ({
 
         <div className="form-field">
           <label htmlFor="numberOfChildren">Number of Children:</label>
-          <input type="number" min="1" max="15" placeholder="1-5" id="numberOfChildren" />
+          <input type="number" min="1" max="15" placeholder="1-15" id="numberOfChildren" />
         </div>
 
         <div className="form-field">
@@ -41,16 +41,16 @@ export default ({
       </div>
 
       <div className="actions">
-        <a
+        <button
           href="#"
-          className="cancel-button"
+          className="button-clear"
           onClick={(ev) => {
             ev.preventDefault()
             onCancelFactoryCreate()
           }}
         >
           Cancel
-        </a>
+        </button>
 
         {' '}
 
