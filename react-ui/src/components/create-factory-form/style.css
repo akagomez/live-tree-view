@@ -1,0 +1,23 @@
+.create-factory-form {
+  padding: 1em;
+  margin: 0;
+  border: 1px solid #999;
+}
+
+.create-factory-form fieldset {
+  margin: 0;
+}
+
+.create-factory-form .form-fields {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.create-factory-form .form-field {
+  flex: 1 auto auto;
+  padding-right: 1em;
+}
+
+.create-factory-form label {
+  white-space: nowrap;
+}

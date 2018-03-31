@@ -1,5 +1,7 @@
 import React from 'react';
 
+import CreateFactoryForm from '../create-factory-form/'
+
 import { Plus as PlusIcon } from 'react-feather';
 
 import './style.css';
@@ -21,22 +23,14 @@ export default ({
         <button
           className="button-feather-icon button-outline"
           onClick={onPromptCreateFactoryForm}
+          disabled={createFactoryFormIsVisible}
         >
           <PlusIcon />
         </button>
 
         {createFactoryFormIsVisible &&
-          <div className="row">
-            <div className="column column-50">
-              <h5>
-                Create Factory Node
-              </h5>
-              <form>
-                <label htmlFor="factoryName">Name</label>
-                <input type="text" placeholder="Factory Name" id="factoryName" />
-              </form>
-            </div>
-          </div>
+              <CreateFactoryForm />
+
         }
 
         <ul>
