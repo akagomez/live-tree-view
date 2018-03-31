@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
@@ -28,6 +29,9 @@ if (!cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
+  // Parse JSON payloads
+  app.use(bodyParser.json());
+
   // Represent a single "Tree" resource (this app only has one)
   app.get('/rest/tree/1', function (req, res) {
     res.json({
@@ -40,6 +44,19 @@ if (!cluster.isMaster) {
             upperBound: 999
           }
         ]
+      }
+    })
+  });
+
+  // Create Factory Nodes
+  app.post('/rest/factory', function (req, res) {
+
+
+    console.log(req.body)
+
+    res.json({
+      data: {
+        // TODO: Return created resource
       }
     })
   });

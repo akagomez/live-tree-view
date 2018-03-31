@@ -45,6 +45,14 @@ const state = store({
       },
       hide () {
         this.isVisible = false;
+      },
+      async submit () {
+        const response = await axios.post(
+          '/rest/factory',
+          state.ui.createFactoryForm.fields
+        );
+
+        console.log(response.data)
       }
     }
   },
@@ -73,7 +81,8 @@ const App = view(() => (
           onUpdateCreateFactoryField={(key, value) => {
             state.ui.createFactoryForm.fields[key] = value;
           }}
-          onCancelFactoryCreate={() => state.ui.createFactoryForm.hide()}
+          onCancelCreateFactoryForm={() => state.ui.createFactoryForm.hide()}
+          onSubmitCreateFactoryForm={() => state.ui.createFactoryForm.submit()}
         />
       </div>
     </div>

@@ -3,14 +3,14 @@ import React from 'react';
 import './style.css';
 
 export default ({
-  onUpdateCreateFactoryField,
-  onCancelFactoryCreate,
-  onSubmitFactoryCreate
+  onUpdateField,
+  onCancelForm,
+  onSubmitForm
 }) => {
 
   const onChangeFieldValue = (ev) => {
     console.log(ev.currentTarget.id, ev.currentTarget.value)
-    onUpdateCreateFactoryField(
+    onUpdateField(
       ev.currentTarget.id,
       ev.currentTarget.value
     )
@@ -73,11 +73,11 @@ export default ({
 
         <div className="actions">
           <button
-            href="#"
+            type="button"
             className="button-clear"
             onClick={(ev) => {
               ev.preventDefault()
-              onCancelFactoryCreate()
+              onCancelForm()
             }}
           >
             Cancel
@@ -86,7 +86,8 @@ export default ({
           {' '}
 
           <button
-            onClick={onSubmitFactoryCreate}
+            type="submit"
+            onClick={onSubmitForm}
           >
             Create Factory Node
           </button>

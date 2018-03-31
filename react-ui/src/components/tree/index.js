@@ -10,7 +10,8 @@ export default ({
   createFactoryFormIsVisible,
   onPromptCreateFactoryForm,
   onUpdateCreateFactoryField,
-  onCancelFactoryCreate,
+  onCancelCreateFactoryForm,
+  onSubmitCreateFactoryForm
 }) => (
   <div className="tree">
 
@@ -32,8 +33,9 @@ export default ({
 
         {createFactoryFormIsVisible &&
           <CreateFactoryForm
-            onCancelFactoryCreate={onCancelFactoryCreate}
-            onUpdateCreateFactoryField={onUpdateCreateFactoryField} />
+            onUpdateField={onUpdateCreateFactoryField}
+            onCancelForm={onCancelCreateFactoryForm}
+            onSubmitForm={onSubmitCreateFactoryForm} />
         }
 
         <ul>
