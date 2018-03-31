@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { view, store } from 'react-easy-state'
+
 import Header from './components/header';
 import Tree from './components/tree';
 
@@ -31,14 +33,32 @@ socket.onclose = function(event) {
   console.log('onclose');
 };
 
-ReactDOM.render(
+const state = store({
+  createFactoryForm: {
+    isVisible: false
+  }
+})
+
+// TODO: Remove after done debugging
+window.state = state;
+
+const App = view(() => (
   <div className="container">
     <div className="row">
       <div className="column">
         <Header />
-        <Tree />
+        <Tree
+          createFactoryFormIsVisible={state.createFactoryForm.isVisible}
+          onPromptCreateFactoryForm={() => {
+            state.createFactoryForm.isVisible = true
+          }}
+        />
       </div>
     </div>
-  </div>,
+  </div>
+))
+
+ReactDOM.render(
+  <App />,
   document.getElementById('root')
 );
