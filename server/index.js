@@ -4,6 +4,8 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
+const { celebrate, Joi, errors } = require('celebrate');
+
 const mongoose = require('mongoose');
 
 const url = require('url');
@@ -49,8 +51,17 @@ if (!cluster.isMaster) {
   });
 
   // Create Factory Nodes
-  app.post('/rest/factory', function (req, res) {
-
+  app.post('/rest/factory', celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().regex(/^[\w\-\s]+$/),
+      numberOfChildren: Joi.number()
+        .integer()
+        .min(1)
+        .max(15),
+      lowerBound: Joi.number().integer(),
+      upperBound: Joi.number().integer(),
+    })
+  }), function (req, res) {
 
     console.log(req.body)
 
@@ -60,6 +71,8 @@ if (!cluster.isMaster) {
       }
     })
   });
+
+  app.use(errors());
 
   // All remaining requests return the React app, so it can handle routing.
   app.get('*', function(request, response) {

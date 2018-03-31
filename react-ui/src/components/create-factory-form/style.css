@@ -8,6 +8,10 @@
   margin: 0;
 }
 
+.create-factory-form .errors {
+  color: red;
+}
+
 .create-factory-form .form-fields {
   display: flex;
   flex-wrap: wrap;

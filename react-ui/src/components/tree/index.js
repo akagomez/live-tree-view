@@ -7,6 +7,7 @@ import { Plus as PlusIcon } from 'react-feather';
 import './style.css';
 
 export default ({
+  createFactoryFormErrors,
   createFactoryFormIsVisible,
   onPromptCreateFactoryForm,
   onUpdateCreateFactoryField,
@@ -33,6 +34,7 @@ export default ({
 
         {createFactoryFormIsVisible &&
           <CreateFactoryForm
+            errors={createFactoryFormErrors}
             onUpdateField={onUpdateCreateFactoryField}
             onCancelForm={onCancelCreateFactoryForm}
             onSubmitForm={onSubmitCreateFactoryForm} />

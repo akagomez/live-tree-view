@@ -3,6 +3,7 @@ import React from 'react';
 import './style.css';
 
 export default ({
+  errors,
   onUpdateField,
   onCancelForm,
   onSubmitForm
@@ -25,6 +26,20 @@ export default ({
       }}
     >
       <fieldset>
+
+        {errors &&
+          <div className="errors">
+            <span>Errors:</span>
+            <ul>
+              {errors.map((error, index) => (
+                <li key={index}>
+                  {error}
+                </li>
+              ))}
+            </ul>
+          </div>
+        }
+
         <p>
           Create a factory node.
         </p>

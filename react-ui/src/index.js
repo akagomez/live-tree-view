@@ -39,6 +39,7 @@ const state = store({
   ui: {
     createFactoryForm: {
       isVisible: true,
+      errors: undefined,
       fields: {},
       show () {
         this.isVisible = true
@@ -47,12 +48,21 @@ const state = store({
         this.isVisible = false;
       },
       async submit () {
-        const response = await axios.post(
-          '/rest/factory',
-          state.ui.createFactoryForm.fields
-        );
 
-        console.log(response.data)
+        var response;
+
+        try {
+          response = await axios.post(
+            '/rest/factory',
+            state.ui.createFactoryForm.fields
+          );
+        } catch (err) {
+          // NOTE: Updating the array does not trigger
+          // re-render
+          this.errors = [err.response.data.message];
+        }
+
+        response && console.log(response.data)
       }
     }
   },
@@ -76,6 +86,7 @@ const App = view(() => (
       <div className="column">
         <Header />
         <Tree
+          createFactoryFormErrors={state.ui.createFactoryForm.errors}
           createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
           onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
           onUpdateCreateFactoryField={(key, value) => {
