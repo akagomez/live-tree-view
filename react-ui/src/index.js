@@ -5,6 +5,7 @@ import Header from './components/header';
 import Tree from './components/tree';
 
 import 'milligram/dist/milligram.css'
+import './theme.css'
 
 const protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
   'wss' : 'ws';

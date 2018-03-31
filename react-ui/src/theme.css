@@ -1,0 +1,16 @@
+/**
+ * Customize Milligram
+ **/
+
+button {
+  margin-bottom: 0;
+}
+
+.button-feather-icon {
+  padding: 0;
+  line-height: 26px;
+  height: 26px;
+  width: 26px;
+  vertical-align: middle;
+  margin-top: -3px;
+}
