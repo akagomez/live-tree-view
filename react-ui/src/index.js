@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 
-// TODO: Use a env variable that represents secure/insecure
-// socket connections
-var protocol = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
+console.log(process.env)
+
+var protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
+  'wss' : 'ws';
 var socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
 
 // TODO: Remove this once the interface is wired up
