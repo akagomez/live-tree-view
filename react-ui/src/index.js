@@ -5,7 +5,7 @@ import './index.css';
 
 // Create a new WebSocket.
 // var socket = new WebSocket('wss://echo.websocket.org');
-var socket = new WebSocket(`ws://${window.location.host}/ws`);
+var socket = new WebSocket(`wss://${window.location.host}/ws`);
 window.socket = socket;
 
 // Handle any errors that occur.
