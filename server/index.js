@@ -10,20 +10,10 @@ const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 5000;
 
-// Multi-process to utilize all CPU cores.
-if (cluster.isMaster) {
-  console.error(`Node cluster master ${process.pid} is running`);
-
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('exit', (worker, code, signal) => {
-    console.error(`Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`);
-  });
-
-} else {
+/**
+ * Configures the individual process responding to HTTP/TCP connections
+ **/
+if (!cluster.isMaster) {
   const app = express();
 
   // Connect to MongoDB
@@ -66,5 +56,20 @@ if (cluster.isMaster) {
     });
 
     ws.send('something');
+  });
+
+/**
+ * Forks multiple process to utilize all CPU cores
+ **/
+} else {
+  console.error(`Node cluster master ${process.pid} is running`);
+
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.error(`Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`);
   });
 }
