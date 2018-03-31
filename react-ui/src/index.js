@@ -5,9 +5,9 @@ import './index.css';
 
 console.log(process.env)
 
-var protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
+const protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
   'wss' : 'ws';
-var socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
 
 // TODO: Remove this once the interface is wired up
 window.socket = socket;
