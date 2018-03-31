@@ -13,9 +13,9 @@ button {
 
 .button-feather-icon {
   padding: 0;
-  line-height: 26px;
-  height: 26px;
-  width: 26px;
+  line-height: inherit;
+  height: auto;
+  width: auto;
   vertical-align: middle;
   margin-top: -3px;
 }
