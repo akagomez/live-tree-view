@@ -6,6 +6,8 @@ import { view, store } from 'react-easy-state'
 import Header from './components/header';
 import Tree from './components/tree';
 
+import axios from 'axios';
+
 import 'milligram/dist/milligram.css'
 import './theme.css'
 
@@ -38,11 +40,20 @@ const state = store({
     createFactoryForm: {
       isVisible: false
     }
+  },
+  tree: {
+    async fetch () {
+      const response = await axios.get('/rest/tree/1');
+
+      console.log(response.data)
+    }
   }
 })
 
 // TODO: Remove after done debugging
 window.state = state;
+
+state.tree.fetch()
 
 const App = view(() => (
   <div className="container">

@@ -28,10 +28,20 @@ if (!cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-  // Answer API requests.
-  app.get('/api', function (req, res) {
-    res.set('Content-Type', 'application/json');
-    res.send('{"message":"Hello from the custom server!"}');
+  // Represent a single "Tree" resource (this app only has one)
+  app.get('/rest/tree/1', function (req, res) {
+    res.json({
+      data: {
+        factories: [
+          {
+            name: 'Mock Factory',
+            numberOfChildren: 10,
+            lowerBound: 100,
+            upperBound: 999
+          }
+        ]
+      }
+    })
   });
 
   // All remaining requests return the React app, so it can handle routing.
