@@ -3,6 +3,9 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
+const url = require('url');
+const WebSocket = require('ws');
+
 const PORT = process.env.PORT || 5000;
 
 // Multi-process to utilize all CPU cores.
@@ -35,7 +38,22 @@ if (cluster.isMaster) {
     response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
   });
 
-  app.listen(PORT, function () {
+  const server = app.listen(PORT, function () {
     console.error(`Node cluster worker ${process.pid}: listening on port ${PORT}`);
+  });
+
+  const wss = new WebSocket.Server({ server });
+
+  wss.on('connection', function connection(ws, req) {
+    const location = url.parse(req.url, true);
+
+    // You might use location.query.access_token to authenticate or share sessions
+    // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+
+    ws.on('message', function incoming(message) {
+      console.log('received: %s', message);
+    });
+
+    ws.send('something');
   });
 }
