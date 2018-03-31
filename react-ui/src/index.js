@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Tree from './components/tree';
 
+import 'milligram/dist/milligram.css'
+
 const protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
   'wss' : 'ws';
 const socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
@@ -27,6 +29,12 @@ socket.onclose = function(event) {
 };
 
 ReactDOM.render(
-  <Tree />,
+  <div className="container">
+    <div className="row">
+      <div className="column">
+        <Tree />
+      </div>
+    </div>
+  </div>,
   document.getElementById('root')
 );
