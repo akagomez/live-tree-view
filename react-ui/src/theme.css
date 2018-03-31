@@ -2,6 +2,10 @@
  * Customize Milligram
  **/
 
+*:focus {
+  outline: auto 5px lightblue !important;
+}
+
 ul, ol, dl {
   list-style: circle;
   margin-left: 1.7em;
