@@ -3,6 +3,8 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
+const mongoose = require('mongoose');
+
 const url = require('url');
 const WebSocket = require('ws');
 
@@ -23,6 +25,15 @@ if (cluster.isMaster) {
 
 } else {
   const app = express();
+
+  // Connect to MongoDB
+  mongoose.connect(process.env.MONGODB_URI);
+
+  const db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function() {
+    console.log('Connected to db!')
+  });
 
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
