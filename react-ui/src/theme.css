@@ -2,6 +2,11 @@
  * Customize Milligram
  **/
 
+ul, ol, dl {
+  list-style: circle;
+  margin-left: 1.7em;
+}
+
 button {
   margin-bottom: 0;
 }
