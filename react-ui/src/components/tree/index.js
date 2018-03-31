@@ -9,9 +9,12 @@ export default ({
   onPromptCreateFactoryForm
 }) => (
   <div className="tree">
+
     <ul>
       <li>
-        Tree Root
+        <span className="node-name">
+          Tree Root
+        </span>
 
         {' '}
 
@@ -38,11 +41,15 @@ export default ({
 
         <ul>
           <li>
-            Factory Node
+            <span className="node-name">
+              Factory Node
+            </span>
 
             <ul>
               <li>
-                Child Number
+                <span className="node-name">
+                  Child Number
+                </span>
               </li>
             </ul>
 
