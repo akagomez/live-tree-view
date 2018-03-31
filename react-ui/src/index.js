@@ -1,9 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import './index.css';
-
-console.log(process.env)
+import Tree from './components/tree';
 
 const protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
   'wss' : 'ws';
@@ -30,6 +27,6 @@ socket.onclose = function(event) {
 };
 
 ReactDOM.render(
-  <App />,
+  <Tree />,
   document.getElementById('root')
 );
