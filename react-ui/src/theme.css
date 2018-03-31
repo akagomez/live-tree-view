@@ -19,3 +19,7 @@ button {
   vertical-align: middle;
   margin-top: -3px;
 }
+
+.button-feather-icon svg {
+  float: left;
+}
