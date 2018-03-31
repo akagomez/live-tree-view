@@ -26,8 +26,8 @@ export default ({
         </button>
 
         {createFactoryFormIsVisible &&
-          <div class="row">
-            <div class="column column-50">
+          <div className="row">
+            <div className="column column-50">
               <h5>
                 Create Factory Node
               </h5>
