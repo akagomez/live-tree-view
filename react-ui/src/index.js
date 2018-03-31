@@ -39,6 +39,7 @@ const state = store({
   ui: {
     createFactoryForm: {
       isVisible: true,
+      fields: {},
       show () {
         this.isVisible = true
       },
@@ -69,6 +70,9 @@ const App = view(() => (
         <Tree
           createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
           onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
+          onUpdateCreateFactoryField={(key, value) => {
+            state.ui.createFactoryForm.fields[key] = value;
+          }}
           onCancelFactoryCreate={() => state.ui.createFactoryForm.hide()}
         />
       </div>
