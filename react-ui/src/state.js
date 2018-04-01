@@ -7,7 +7,7 @@ import {
 
 const state = store({
   async init () {
-    const tree = await Tree.findAll();
+    const tree = await Tree.findOne(1);
 
     this.tree.factoryNodes = tree.factoryNodes.map((node) => {
       return new FactoryNode(node)

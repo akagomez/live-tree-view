@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export class Tree {
-  static async findAll() {
-    const response = await axios.get('/rest/tree/1')
+  static async findOne(id) {
+    const response = await axios.get(`/rest/tree/${id}`)
 
     return response && response.data.data;
   }
