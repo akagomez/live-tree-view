@@ -2,7 +2,10 @@ import React from 'react';
 
 import CreateFactoryForm from '../create-factory-form/'
 
-import { Plus as PlusIcon } from 'react-feather';
+import {
+  Plus as PlusIcon,
+  Trash as TrashIcon
+} from 'react-feather';
 
 import './style.css';
 
@@ -13,7 +16,8 @@ export default ({
   onPromptCreateFactoryForm,
   onUpdateCreateFactoryField,
   onCancelCreateFactoryForm,
-  onSubmitCreateFactoryForm
+  onSubmitCreateFactoryForm,
+  onDestroyChild
 }) => (
   <div className="tree">
 
@@ -47,6 +51,17 @@ export default ({
               <span className="node-name">
                 {child.name} ({child.lowerBound}-{child.upperBound})
               </span>
+
+              {' '}
+
+              <button
+                className="button-feather-icon button-clear"
+                onClick={() => {
+                  onDestroyChild(child)
+                }}
+              >
+                <TrashIcon size="20" />
+              </button>
 
               <ul>
                 {[...Array(child.numberOfChildren).keys()].map((val, i) => (

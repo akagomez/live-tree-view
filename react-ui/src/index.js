@@ -35,6 +35,35 @@ socket.onclose = function(event) {
   console.log('onclose');
 };
 
+class FactoryNode {
+  constructor({
+    _id,
+    name,
+    numberOfChildren,
+    lowerBound,
+    upperBound
+  }) {
+    this._id = _id
+    this.name = name
+    this.numberOfChildren = numberOfChildren
+    this.lowerBound = lowerBound
+    this.upperBound = upperBound
+  }
+  async destroy () {
+    var response;
+
+    try {
+      response = await axios.delete(
+        `/rest/factory/${this._id}`,
+      );
+    } catch (err) {
+      console.error(err)
+    }
+
+    console.log(response)
+  }
+}
+
 const state = store({
   ui: {
     createFactoryForm: {
@@ -77,7 +106,9 @@ const state = store({
 
       console.log(response.data)
 
-      this.factoryNodes = response.data.data.factoryNodes
+      this.factoryNodes = response.data.data.factoryNodes.map((node) => {
+        return new FactoryNode(node)
+      })
     }
   }
 })
@@ -100,6 +131,7 @@ const App = view(() => (
           }}
           onCancelCreateFactoryForm={() => state.ui.createFactoryForm.hide()}
           onSubmitCreateFactoryForm={() => state.ui.createFactoryForm.submit()}
+          onDestroyChild={child => child.destroy()}
         />
       </div>
     </div>

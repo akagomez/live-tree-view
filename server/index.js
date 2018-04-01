@@ -92,6 +92,32 @@ if (!cluster.isMaster) {
     })
   });
 
+  // Delete Factory Nodes
+  app.delete('/rest/factory/:id', celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().required().regex(/^[\w]+$/)
+    })
+  }), async (req, res) => {
+
+    console.log(req.params)
+
+    var response
+
+    try {
+      response = await FactoryNode.deleteOne({
+        _id: req.params.id
+      })
+    } catch (err) {
+      throw err
+    }
+
+    if (response && response.ok && response.n > 0) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(404)
+    }
+  });
+
   app.use(errors());
 
   // All remaining requests return the React app, so it can handle routing.
