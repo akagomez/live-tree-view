@@ -4,7 +4,7 @@ const {
   FactoryNode
 } = require('./models')
 
-module.exports = (app, wss) => {
+module.exports = (app) => {
 
   // Represent a single "Tree" resource (this app only has one)
   app.get('/rest/tree/1', function (req, res) {
