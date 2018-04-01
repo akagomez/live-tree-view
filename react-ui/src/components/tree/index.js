@@ -26,11 +26,11 @@ export default ({
         {' '}
 
         <button
-          className="button-feather-icon button-outline"
+          className="button-feather-icon button-clear"
           onClick={onPromptCreateFactoryForm}
           disabled={createFactoryFormIsVisible}
         >
-          <PlusIcon />
+          <PlusIcon size="20" />
         </button>
 
         {createFactoryFormIsVisible &&
