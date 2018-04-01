@@ -42,9 +42,9 @@ const state = store({
 
       switch (message.type) {
         case 'NODE_CREATED':
-          state.tree.factoryNodes = [
-            new FactoryNode(message.meta)
-          ].concat(state.tree.factoryNodes)
+          state.tree.factoryNodes = [].concat(
+            [new FactoryNode(message.meta)],
+            state.tree.factoryNodes)
 
           break;
 
