@@ -62,7 +62,11 @@ const state = store({
           this.errors = [err.response.data.message];
         }
 
-        response && console.log(response.data)
+        // Reset the form
+        if (response) {
+          this.fields = {}
+          this.isVisible = false;
+        }
       }
     }
   },
