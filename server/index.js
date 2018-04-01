@@ -13,6 +13,15 @@ const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 5000;
 
+var factoryNodeSchema = mongoose.Schema({
+  name: String,
+  numberOfChildren: Number,
+  lowerBound: Number,
+  upperBound: Number
+});
+
+var FactoryNode = mongoose.model('FactoryNode', factoryNodeSchema);
+
 /**
  * Configures the individual process responding to HTTP/TCP connections
  **/
@@ -36,17 +45,15 @@ if (!cluster.isMaster) {
 
   // Represent a single "Tree" resource (this app only has one)
   app.get('/rest/tree/1', function (req, res) {
-    res.json({
-      data: {
-        factories: [
-          {
-            name: 'Mock Factory',
-            numberOfChildren: 10,
-            lowerBound: 100,
-            upperBound: 999
-          }
-        ]
-      }
+
+    FactoryNode.find(function (err, factoryNodes) {
+      if (err) return console.error(err);
+
+      res.json({
+        data: {
+          factoryNodes
+        }
+      })
     })
   });
 
@@ -61,9 +68,22 @@ if (!cluster.isMaster) {
       lowerBound: Joi.number().integer(),
       upperBound: Joi.number().integer(),
     })
-  }), function (req, res) {
+  }), async (req, res) => {
 
     console.log(req.body)
+
+    const createdFactoryNode = new FactoryNode({
+      name: req.body.name,
+      numberOfChildren: req.body.numberOfChildren,
+      lowerBound: req.body.lowerBound,
+      upperBound: req.body.upperBound,
+    })
+
+    createdFactoryNode.save((err, instance) => {
+      if (err) return console.error(err);
+
+      console.log(instance)
+    })
 
     res.json({
       data: {
