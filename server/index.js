@@ -5,7 +5,7 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 
 const mongoose = require('mongoose');
 
@@ -14,14 +14,7 @@ const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 5000;
 
-var factoryNodeSchema = mongoose.Schema({
-  name: String,
-  numberOfChildren: Number,
-  lowerBound: Number,
-  upperBound: Number
-});
-
-var FactoryNode = mongoose.model('FactoryNode', factoryNodeSchema);
+const bootstrapResources = require('./resources');
 
 /**
  * Configures the individual process responding to HTTP/TCP connections
@@ -46,86 +39,7 @@ if (!cluster.isMaster) {
   // Parse JSON payloads
   app.use(bodyParser.json());
 
-  // Represent a single "Tree" resource (this app only has one)
-  app.get('/rest/tree/1', function (req, res) {
-
-    FactoryNode.find(function (err, factoryNodes) {
-      if (err) return console.error(err);
-
-      res.json({
-        data: {
-          factoryNodes
-        }
-      })
-    })
-  });
-
-  // Create Factory Nodes
-  app.post('/rest/factory', celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().regex(/^[\w\-\s]+$/),
-      numberOfChildren: Joi.number()
-        .integer()
-        .min(1)
-        .max(15),
-      lowerBound: Joi.number().integer(),
-      upperBound: Joi.number().integer(),
-    })
-  }), async (req, res) => {
-
-    console.log(req.body)
-
-    const createdFactoryNode = new FactoryNode({
-      name: req.body.name,
-      numberOfChildren: req.body.numberOfChildren,
-      lowerBound: req.body.lowerBound,
-      upperBound: req.body.upperBound,
-    })
-
-    createdFactoryNode.save((err, instance) => {
-      if (err) return console.error(err);
-
-      console.log(instance)
-
-      res.status(201)
-      res.json({
-        data: instance.toJSON()
-      })
-    })
-  });
-
-  // Delete Factory Nodes
-  app.delete('/rest/factory/:id', celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().regex(/^[\w]+$/)
-    })
-  }), async (req, res) => {
-
-    console.log(req.params)
-
-    var response
-
-    try {
-      response = await FactoryNode.deleteOne({
-        _id: req.params.id
-      })
-    } catch (err) {
-      throw err
-    }
-
-    if (response && response.ok && response.n > 0) {
-      res.sendStatus(204)
-    } else {
-      res.sendStatus(404)
-    }
-  });
-
   app.use(errors());
-
-  // All remaining requests return the React app, so it can handle routing.
-  app.get('*', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-  });
 
   const server = app.listen(PORT, function () {
     console.error(`Node cluster worker ${process.pid}: listening on port ${PORT}`);
@@ -133,17 +47,11 @@ if (!cluster.isMaster) {
 
   const wss = new WebSocket.Server({ server });
 
-  wss.on('connection', function connection(ws, req) {
-    const location = url.parse(req.url, true);
+  bootstrapResources(app, wss)
 
-    // You might use location.query.access_token to authenticate or share sessions
-    // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
-    ws.on('message', function incoming(message) {
-      console.log('received: %s', message);
-    });
-
-    ws.send('something');
+  // All remaining requests return the React app, so it can handle routing.
+  app.get('*', function(request, response) {
+    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
   });
 
 /**
