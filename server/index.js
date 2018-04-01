@@ -34,8 +34,6 @@ app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 // Parse JSON payloads
 app.use(bodyParser.json());
 
-app.use(errors());
-
 const server = app.listen(PORT, function () {
   console.error(`Node cluster worker ${process.pid}: listening on port ${PORT}`);
 });
@@ -44,6 +42,8 @@ const wss = new WebSocket.Server({ server });
 
 dispatcher = createDispatcher(wss)
 bootstrapResources(app, dispatcher)
+
+app.use(errors());
 
 // All remaining requests return the React app, so it can handle routing.
 app.get('*', function(request, response) {
