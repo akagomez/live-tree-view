@@ -57,8 +57,8 @@ const state = store({
             state.ui.createFactoryForm.fields
           );
         } catch (err) {
-          // NOTE: Updating the array does not trigger
-          // re-render
+          // NOTE: Updating an existing array does not
+          // trigger a re-render
           this.errors = [err.response.data.message];
         }
 
