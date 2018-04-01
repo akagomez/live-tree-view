@@ -4,7 +4,8 @@ import CreateFactoryForm from '../create-factory-form/'
 
 import {
   Plus as PlusIcon,
-  Trash as TrashIcon
+  Trash as TrashIcon,
+  Edit as EditIcon
 } from 'react-feather';
 
 import './style.css';
@@ -51,6 +52,17 @@ export default ({
               <span className="node-name">
                 {child.name} ({child.lowerBound}-{child.upperBound})
               </span>
+
+              {' '}
+
+              <button
+                className="button-feather-icon button-clear"
+                onClick={() => {
+
+                }}
+              >
+                <EditIcon size="20" />
+              </button>
 
               {' '}
 
