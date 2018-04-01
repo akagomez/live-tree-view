@@ -39,7 +39,7 @@ const state = store({
   ui: {
     createFactoryForm: {
       isVisible: true,
-      errors: undefined,
+      errors: [],
       fields: {},
       show () {
         this.isVisible = true

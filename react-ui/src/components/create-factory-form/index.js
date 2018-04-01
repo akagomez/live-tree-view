@@ -26,10 +26,9 @@ export default ({
       }}
     >
       <fieldset>
-
-        {errors &&
+        {errors && errors.length > 0 &&
           <div className="errors">
-            <span>Errors:</span>
+            <span>Submission Errors:</span>
             <ul>
               {errors.map((error, index) => (
                 <li key={index}>
