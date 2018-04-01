@@ -11,18 +11,21 @@ import subscribe from './subscribe'
 const state = store({
   async init () {
     const tree = await Tree.findOne(1);
+    let lastUpdated;
 
-    const factoryNodes = tree.factoryNodes.map((node) => {
-      return new FactoryNode(node)
-    })
+    if (tree.results) {
+      const factoryNodes = tree.results.map((node) => {
+        return new FactoryNode(node)
+      })
 
-    this.tree.factoryNodes = factoryNodes
+      this.tree.factoryNodes = factoryNodes
 
-    const lastUpdated = factoryNodes
-      .map(n => n._updated)
-      .sort()
-      .reverse()
-      .shift();
+      lastUpdated = factoryNodes
+        .map(n => n._updated)
+        .sort()
+        .reverse()
+        .shift();
+    }
 
     subscribe(lastUpdated, 1000, (message) => {
 
