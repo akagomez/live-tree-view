@@ -67,10 +67,13 @@ const state = store({
     }
   },
   tree: {
+    factoryNodes: [],
     async fetch () {
       const response = await axios.get('/rest/tree/1');
 
       console.log(response.data)
+
+      this.factoryNodes = response.data.data.factoryNodes
     }
   }
 })
@@ -78,14 +81,13 @@ const state = store({
 // TODO: Remove after done debugging
 window.state = state;
 
-state.tree.fetch()
-
 const App = view(() => (
   <div className="container">
     <div className="row">
       <div className="column">
         <Header />
         <Tree
+          children={state.tree.factoryNodes}
           createFactoryFormErrors={state.ui.createFactoryForm.errors}
           createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
           onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
@@ -102,5 +104,8 @@ const App = view(() => (
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root')
+  document.getElementById('root'),
+  () => {
+    state.tree.fetch()
+  }
 );

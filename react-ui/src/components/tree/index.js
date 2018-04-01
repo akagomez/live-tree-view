@@ -7,6 +7,7 @@ import { Plus as PlusIcon } from 'react-feather';
 import './style.css';
 
 export default ({
+  children,
   createFactoryFormErrors,
   createFactoryFormIsVisible,
   onPromptCreateFactoryForm,
@@ -41,20 +42,24 @@ export default ({
         }
 
         <ul>
-          <li>
-            <span className="node-name">
-              Factory Node
-            </span>
+          {children && children.map((child) => (
+            <li key={child._id}>
+              <span className="node-name">
+                {child.name} ({child.lowerBound}-{child.upperBound})
+              </span>
 
-            <ul>
-              <li>
-                <span className="node-name">
-                  Child Number
-                </span>
-              </li>
-            </ul>
+              <ul>
+                {[...Array(child.numberOfChildren).keys()].map((val, i) => (
+                  <li key={i}>
+                    <span className="node-name">
+                      Child {i}
+                    </span>
+                  </li>
+                ))}
+              </ul>
 
-          </li>
+            </li>
+          ))}
         </ul>
 
       </li>
