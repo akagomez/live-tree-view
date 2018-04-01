@@ -67,7 +67,7 @@ class FactoryNode {
 const state = store({
   ui: {
     createFactoryForm: {
-      isVisible: true,
+      isVisible: false,
       errors: [],
       fields: {},
       show () {
