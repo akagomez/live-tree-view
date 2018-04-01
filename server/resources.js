@@ -4,7 +4,7 @@ const {
   FactoryNode
 } = require('./models')
 
-module.exports = (app) => {
+module.exports = (app, dispatcher) => {
 
   // Represent a single "Tree" resource (this app only has one)
   app.get('/rest/tree/1', function (req, res) {
@@ -51,6 +51,12 @@ module.exports = (app) => {
       res.json({
         data: instance.toJSON()
       })
+
+      dispatcher.send({
+        type: 'NODE_CREATED',
+        meta: instance.toObject()
+      })
+
     })
   });
 
@@ -75,6 +81,13 @@ module.exports = (app) => {
 
     if (response && response.ok && response.n > 0) {
       res.sendStatus(204)
+
+      dispatcher.send({
+        type: 'NODE_DESTROYED',
+        meta: {
+          _id: req.params.id
+        }
+      })
     } else {
       res.sendStatus(404)
     }

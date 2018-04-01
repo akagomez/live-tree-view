@@ -5,13 +5,65 @@ import {
   FactoryNode
 } from './models'
 
+
+import subscribe from './subscribe'
+
 const state = store({
   async init () {
     const tree = await Tree.findOne(1);
 
-    this.tree.factoryNodes = tree.factoryNodes.map((node) => {
+    const factoryNodes = tree.factoryNodes.map((node) => {
       return new FactoryNode(node)
     })
+
+    this.tree.factoryNodes = factoryNodes
+
+    const lastUpdated = factoryNodes
+      .map(n => n._updated)
+      .sort()
+      .reverse()
+      .shift();
+
+    subscribe(lastUpdated, 1000, (message) => {
+
+      const id = message.meta._id
+
+      // TODO: Create a lookup map
+      let matchingLocalNode;
+
+      state.tree.factoryNodes.forEach((factoryNode, index) => {
+        if (factoryNode._id === id) {
+          matchingLocalNode = state.tree.factoryNodes[index]
+        }
+      })
+
+      switch (message.type) {
+        case 'NODE_CREATED':
+          state.tree.factoryNodes = state.tree.factoryNodes.concat([
+            new FactoryNode(message.meta)
+          ])
+
+          break;
+
+        case 'NODE_UPDATED':
+          matchingLocalNode.set(message.meta)
+          break;
+
+        case 'NODE_DESTROYED':
+          state.tree.factoryNodes = state.tree.factoryNodes
+            .filter((node) => node !== matchingLocalNode)
+          break;
+
+        default:
+          console.error('Unhandled WS message:', message)
+          break;
+      }
+
+    }, () => {
+      console.error('Unable to subscribe, retrying...')
+      state.init()
+    })
+
   },
   tree: {
     factoryNodes: [],

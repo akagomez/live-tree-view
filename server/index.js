@@ -13,6 +13,7 @@ const WebSocket = require('ws');
 const PORT = process.env.PORT || 5000;
 
 const bootstrapResources = require('./resources');
+const createDispatcher = require('./dispatcher');
 
 const app = express();
 
@@ -41,7 +42,8 @@ const server = app.listen(PORT, function () {
 
 const wss = new WebSocket.Server({ server });
 
-bootstrapResources(app)
+dispatcher = createDispatcher(wss)
+bootstrapResources(app, dispatcher)
 
 // All remaining requests return the React app, so it can handle routing.
 app.get('*', function(request, response) {

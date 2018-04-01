@@ -9,18 +9,15 @@ export class Tree {
 }
 
 export class FactoryNode {
-  constructor({
-    _id,
-    name,
-    numberOfChildren,
-    lowerBound,
-    upperBound
-  }) {
-    this._id = _id
-    this.name = name
-    this.numberOfChildren = numberOfChildren
-    this.lowerBound = lowerBound
-    this.upperBound = upperBound
+  constructor(props) {
+    this.set(props)
+  }
+  set (props) {
+    const node = this;
+
+    Object.keys(props).forEach((key) => {
+      node[key] = props[key]
+    })
   }
   async save () {
 
