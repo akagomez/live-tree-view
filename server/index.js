@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const morgan = require('morgan')
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
@@ -27,6 +28,8 @@ var FactoryNode = mongoose.model('FactoryNode', factoryNodeSchema);
  **/
 if (!cluster.isMaster) {
   const app = express();
+
+  app.use(morgan('tiny'))
 
   // Connect to MongoDB
   mongoose.connect(process.env.MONGODB_URI);
