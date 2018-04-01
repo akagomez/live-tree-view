@@ -24,7 +24,10 @@ const App = view(() => (
           onUpdateCreateFactoryField={(key, value) => {
             state.ui.createFactoryForm.fields[key] = value;
           }}
-          onCancelCreateFactoryForm={() => state.ui.createFactoryForm.hide()}
+          onCancelCreateFactoryForm={() => {
+            state.ui.createFactoryForm.fields = {}
+            state.ui.createFactoryForm.hide()
+          }}
           onSubmitCreateFactoryForm={() => state.ui.createFactoryForm.submit()}
           onDestroyChild={child => child.destroy()}
         />
