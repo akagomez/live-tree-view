@@ -86,12 +86,11 @@ if (!cluster.isMaster) {
       if (err) return console.error(err);
 
       console.log(instance)
-    })
 
-    res.json({
-      data: {
-        // TODO: Return created resource
-      }
+      res.status(201)
+      res.json({
+        data: instance.toJSON()
+      })
     })
   });
 
