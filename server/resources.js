@@ -7,16 +7,14 @@ const {
 module.exports = (app, dispatcher) => {
 
   // Represent a single "Tree" resource (this app only has one)
-  app.get('/rest/tree/1', function (req, res) {
+  app.get('/rest/tree/1', async (req, res) => {
 
-    FactoryNode.find(function (err, factoryNodes) {
-      if (err) return console.error(err);
+    const results = await FactoryNode.find().sort('-_updated')
 
-      res.json({
-        data: {
-          factoryNodes
-        }
-      })
+    res.json({
+      data: {
+        results
+      }
     })
   });
 
