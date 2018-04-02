@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { view } from 'react-easy-state'
+import { view, store } from 'react-easy-state'
 
 import Header from './components/header';
 import Tree from './components/tree';
@@ -9,7 +9,15 @@ import Tree from './components/tree';
 import 'milligram/dist/milligram.css'
 import './theme.css'
 
-import state from './state'
+import {
+  FactoryNode
+} from './models'
+
+import subscribe from './subscribe'
+
+const state = store({
+  factoryNodes: []
+})
 
 const App = view(() => (
   <div className="container">
@@ -18,24 +26,15 @@ const App = view(() => (
         <Header />
         <Tree
           children={state.factoryNodes}
-          createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
-          onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
-          onCancelCreateFactoryForm={() => {
-            state.ui.createFactoryForm.fields = {}
-            state.ui.createFactoryForm.hide()
+          onSubmitCreateForm={async (props) => {
+            const factoryNode = new FactoryNode(props)
+            await factoryNode.save()
           }}
-          onSubmitCreateFactoryForm={(fields) => state.ui.createFactoryForm.submit(fields)}
-          onDestroyChild={child => child.destroy()}
-          onPromptChildEditForm={(child) => {
-            child.isEditing = true
-          }}
-          onCancelChildEditForm={(child) => {
-            child.isEditing = false
-          }}
-          onSubmitChildEditForm={async (child, props) => {
+          onSubmitEditForm={async (child, props) => {
             await child.save(props)
             child.isEditing = false;
           }}
+          onPressRemoveButton={child => child.destroy()}
         />
       </div>
     </div>
@@ -45,7 +44,59 @@ const App = view(() => (
 ReactDOM.render(
   <App />,
   document.getElementById('root'),
-  () => {
-    state.init()
+  async () => {
+    const factoryNodes = await FactoryNode.findAll();
+    let lastUpdated;
+
+    if (factoryNodes) {
+      state.factoryNodes = factoryNodes.map((node) => {
+        return new FactoryNode(node)
+      })
+
+      lastUpdated = state.factoryNodes
+        .map(n => n._updated)
+        .sort()
+        .reverse()
+        .shift();
+    }
+
+    subscribe(lastUpdated, 1000, (message) => {
+
+      const id = message.meta._id
+
+      // TODO: Create a lookup map
+      let matchingLocalNode;
+
+      state.factoryNodes.forEach((factoryNode, index) => {
+        if (factoryNode._id === id) {
+          matchingLocalNode = state.factoryNodes[index]
+        }
+      })
+
+      switch (message.type) {
+        case 'NODE_CREATED':
+          state.factoryNodes = [].concat(
+            [new FactoryNode(message.meta)],
+            state.factoryNodes)
+          break;
+
+        case 'NODE_UPDATED':
+          Object.assign(matchingLocalNode, message.meta)
+          break;
+
+        case 'NODE_DESTROYED':
+          state.factoryNodes = state.factoryNodes
+            .filter((node) => node !== matchingLocalNode)
+          break;
+
+        default:
+          console.error('Unhandled WS message:', message)
+          break;
+      }
+
+    }, () => {
+      console.error('Unable to subscribe, retrying...')
+      state.init()
+    })
   }
 );

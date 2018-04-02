@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { view } from 'react-easy-state'
+import { store, view } from 'react-easy-state'
 
 import FactoryForm from '../factory-form/'
 
@@ -12,16 +12,16 @@ import {
 
 import './style.css';
 
+const state = store({
+  isCreateFormVisible: false,
+  editedChildId: undefined
+})
+
 export default view(({
   children,
-  createFactoryFormIsVisible,
-  onPromptCreateFactoryForm,
-  onCancelCreateFactoryForm,
-  onSubmitCreateFactoryForm,
-  onDestroyChild,
-  onPromptChildEditForm,
-  onCancelChildEditForm,
-  onSubmitChildEditForm
+  onSubmitCreateForm,
+  onSubmitEditForm,
+  onPressRemoveButton
 }) => (
   <div className="tree">
 
@@ -29,74 +29,75 @@ export default view(({
       <li>
         <span className="node-name">
           Tree Root
-        </span>
-
-        {' '}
+        </span>{' '}
 
         <button
           className="button-feather-icon button-clear"
-          onClick={onPromptCreateFactoryForm}
-          disabled={createFactoryFormIsVisible}
+          onClick={() => {
+            state.isCreateFormVisible = true
+            state.editedChildId = undefined
+          }}
+          disabled={state.isCreateFormVisible}
         >
           <PlusIcon size="20" />
         </button>
 
-        {createFactoryFormIsVisible &&
+        {state.isCreateFormVisible &&
           <FactoryForm
-            onCancelForm={onCancelCreateFactoryForm}
-            onSubmitForm={onSubmitCreateFactoryForm}
             description="Create a new factory node."
-            submitButtonText="Create Factory" />
+            submitButtonText="Create Factory"
+            onCancelForm={() => {
+              state.isCreateFormVisible = false
+            }}
+            onSubmitForm={async (props) => {
+              await onSubmitCreateForm(props)
+              state.isCreateFormVisible = false;
+            }}
+          />
         }
 
         <ul>
           {children && children.map((child) => (
             <li key={child._id}>
               <span className="node-name">
-                {child.name} Factory
-                {' '}
+                {child.name} Factory{' '}
                 <code>[{child.lowerBound}...{child.upperBound}]</code>
-              </span>
-
-              {' '}
+              </span>{' '}
 
               <button
                 className="button-feather-icon button-clear"
-                disabled={child.isEditing}
+                disabled={state.editedChildId === child._id}
                 onClick={() => {
-                  onPromptChildEditForm(child)
+                  state.editedChildId = child._id
+                  state.isCreateFormVisible = false
                 }}
               >
                 <EditIcon size="20" />
-              </button>
-
-              {' '}
+              </button>{' '}
 
               <button
                 className="button-feather-icon button-clear"
-                onClick={() => {
-                  onDestroyChild(child)
-                }}
+                onClick={() => onPressRemoveButton(child)}
               >
                 <TrashIcon size="20" />
               </button>
 
-              {child.isEditing &&
+              {state.editedChildId === child._id &&
                 <FactoryForm
+                  description={`Update the "${child.name}" factory node.`}
+                  submitButtonText="Update Factory"
                   defaultValues={{
                     name: child.name,
                     numberOfChildren: child.numberOfChildren,
                     lowerBound: child.lowerBound,
                     upperBound: child.upperBound
                   }}
-                  onCancelForm={() => {
-                    onCancelChildEditForm(child)
+                  onCancelForm={() => state.editedChildId = undefined}
+                  onSubmitForm={async (props) => {
+                    await onSubmitEditForm(child, props)
+                    state.editedChildId = undefined
                   }}
-                  onSubmitForm={async (fields) => {
-                    await onSubmitChildEditForm(child, fields)
-                  }}
-                  description={`Update the "${child.name}" factory node.`}
-                  submitButtonText="Update Factory" />
+                />
               }
 
               <ul>

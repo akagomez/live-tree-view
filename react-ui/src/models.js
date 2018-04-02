@@ -6,13 +6,15 @@ export class FactoryNode {
     Object.assign(this, props)
   }
 
-  async save () {
-    const props = {
+  async save (newProps) {
+    const currentProps = {
       name: this.name,
       numberOfChildren: this.numberOfChildren,
       lowerBound: this.lowerBound,
       upperBound: this.upperBound
     }
+
+    const props = Object.assign({}, currentProps, newProps)
 
     return this._id ?
       await axios.put(`/rest/factory/${this._id}`, props) :

@@ -7,7 +7,7 @@ import './style.css';
 class NodeForm extends Component {
   form = store({
     errors: [],
-    fields: {}
+    inputs: {}
   })
 
   render () {
@@ -21,7 +21,7 @@ class NodeForm extends Component {
     } = this.props
 
     const onChangeFieldValue = (ev) => {
-      this.form.fields[ev.currentTarget.id] =
+      this.form.inputs[ev.currentTarget.id] =
         ev.currentTarget.value
     }
 
@@ -103,7 +103,7 @@ class NodeForm extends Component {
               className="button-clear"
               onClick={(ev) => {
                 ev.preventDefault()
-                this.form.fields = {}
+                this.form.inputs = {}
                 this.form.errors = []
                 onCancelForm()
               }}
@@ -118,7 +118,7 @@ class NodeForm extends Component {
               onClick={async () => {
                 try {
                   await onSubmitForm(
-                    Object.assign({}, defaultValues, this.form.fields)
+                    Object.assign({}, defaultValues, this.form.inputs)
                   )
                 } catch (err) {
                   this.form.errors = [err.response.data.message]
