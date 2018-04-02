@@ -16,22 +16,42 @@ import {
 import subscribe from './subscribe'
 
 const state = store({
-  factories: [],
+  factoriesById: {},
 
-  get factoriesById () {
-    const map = {}
-    this.factories.forEach((f) => map[f._id] = f)
-    return map;
+  get factories () {
+    let factories = []
+    const ids = Object.keys(this.factoriesById)
+    ids.forEach((id) => {
+      factories.push(this.factoriesById[id])
+    })
+
+    factories = factories.sort((a, b) => {
+      const result = new Date(a._created) < new Date(b._created)
+      return result
+    })
+
+    return factories;
   }
 })
 
 const bootstrap = async () => {
-  const factories = await Factory.findAll();
+  let factories
   let lastUpdated;
 
-  if (factories) {
-    state.factories = factories
+  // Disregard this failure since it probably just means
+  // the server isn't responding to HTTP requests yet
+  try {
+    factories = await Factory.findAll();
+  } catch (e) {}
 
+  if (factories) {
+
+    // Update our application state
+    factories.forEach((model) => {
+      state.factoriesById[model._id] = model
+    })
+
+    // Find our freshest update
     lastUpdated = state.factories
       .map(n => n._updated)
       .sort()
@@ -46,16 +66,17 @@ const bootstrap = async () => {
 
     switch (message.type) {
       case 'NODE_CREATED':
-        state.factories = [].concat(
-          [new Factory(message.meta)],
-          state.factories)
+        if (!factory) {
+          state.factoriesById[id] = new Factory(message.meta)
+        }
         break;
       case 'NODE_UPDATED':
         Object.assign(factory, message.meta)
         break;
       case 'NODE_DESTROYED':
-        state.factories = state.factories
-          .filter((node) => node !== factory)
+        if (factory) {
+          delete state.factoriesById[factory._id]
+        }
         break;
       default:
         console.error('Unhandled WS message:', message)
@@ -81,14 +102,17 @@ const App = view(() => (
         <Tree
           children={state.factories}
           onSubmitCreateForm={async (props) => {
-            const factoryNode = new Factory(props)
-            await factoryNode.save()
+            const factory = new Factory(props)
+            await factory.save()
+            state.factoriesById[factory._id] = factory
           }}
-          onSubmitEditForm={async (child, props) => {
-            await child.save(props)
-            child.isEditing = false;
+          onSubmitEditForm={async (factory, props) => {
+            await factory.save(props)
           }}
-          onPressRemoveButton={child => child.destroy()}
+          onPressRemoveButton={async (factory) => {
+            await factory.destroy()
+            delete state.factoriesById[factory._id]
+          }}
         />
       </div>
     </div>

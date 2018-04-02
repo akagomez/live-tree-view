@@ -16,9 +16,13 @@ export class Factory {
 
     const props = Object.assign({}, currentProps, newProps)
 
-    return this._id ?
+    const response = this._id ?
       await axios.put(`/rest/factories/${this._id}`, props) :
       await axios.post('/rest/factories', props);
+
+    Object.assign(this, response.data.data)
+
+    return response
   }
 
   async destroy () {
