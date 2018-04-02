@@ -10,14 +10,72 @@ import 'milligram/dist/milligram.css'
 import './theme.css'
 
 import {
-  FactoryNode
+  Factory
 } from './models'
 
 import subscribe from './subscribe'
 
 const state = store({
-  factoryNodes: []
+  factories: [],
+
+  get factoriesById () {
+    const map = {}
+    this.factories.forEach((f) => map[f._id] = f)
+    return map;
+  }
 })
+
+const bootstrap = async () => {
+  const factories = await Factory.findAll();
+  let lastUpdated;
+
+  if (factories) {
+    state.factories = factories
+
+    lastUpdated = state.factories
+      .map(n => n._updated)
+      .sort()
+      .reverse()
+      .shift();
+  }
+
+  subscribe(lastUpdated, 1000, (message) => {
+
+    const id = message.meta._id
+    const factory = state.factoriesById[id]
+
+    switch (message.type) {
+      case 'NODE_CREATED':
+        state.factories = [].concat(
+          [new Factory(message.meta)],
+          state.factories)
+        break;
+      case 'NODE_UPDATED':
+        Object.assign(factory, message.meta)
+        break;
+      case 'NODE_DESTROYED':
+        state.factories = state.factories
+          .filter((node) => node !== factory)
+        break;
+      default:
+        console.error('Unhandled WS message:', message)
+        break;
+    }
+
+  }, () => {
+    console.error('Unable to subscribe, retrying...')
+    bootstrap()
+  })
+}
+
+(async () => {
+  try {
+    await bootstrap()
+  } catch(e) {
+    // TODO: Remove once finished debugging mobile
+    alert(e)
+  }
+})()
 
 const App = view(() => (
   <div className="container">
@@ -25,9 +83,9 @@ const App = view(() => (
       <div className="column">
         <Header />
         <Tree
-          children={state.factoryNodes}
+          children={state.factories}
           onSubmitCreateForm={async (props) => {
-            const factoryNode = new FactoryNode(props)
+            const factoryNode = new Factory(props)
             await factoryNode.save()
           }}
           onSubmitEditForm={async (child, props) => {
@@ -43,60 +101,5 @@ const App = view(() => (
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root'),
-  async () => {
-    const factoryNodes = await FactoryNode.findAll();
-    let lastUpdated;
-
-    if (factoryNodes) {
-      state.factoryNodes = factoryNodes.map((node) => {
-        return new FactoryNode(node)
-      })
-
-      lastUpdated = state.factoryNodes
-        .map(n => n._updated)
-        .sort()
-        .reverse()
-        .shift();
-    }
-
-    subscribe(lastUpdated, 1000, (message) => {
-
-      const id = message.meta._id
-
-      // TODO: Create a lookup map
-      let matchingLocalNode;
-
-      state.factoryNodes.forEach((factoryNode, index) => {
-        if (factoryNode._id === id) {
-          matchingLocalNode = state.factoryNodes[index]
-        }
-      })
-
-      switch (message.type) {
-        case 'NODE_CREATED':
-          state.factoryNodes = [].concat(
-            [new FactoryNode(message.meta)],
-            state.factoryNodes)
-          break;
-
-        case 'NODE_UPDATED':
-          Object.assign(matchingLocalNode, message.meta)
-          break;
-
-        case 'NODE_DESTROYED':
-          state.factoryNodes = state.factoryNodes
-            .filter((node) => node !== matchingLocalNode)
-          break;
-
-        default:
-          console.error('Unhandled WS message:', message)
-          break;
-      }
-
-    }, () => {
-      console.error('Unable to subscribe, retrying...')
-      state.init()
-    })
-  }
+  document.getElementById('root')
 );

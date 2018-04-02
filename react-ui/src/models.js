@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export class FactoryNode {
+export class Factory {
 
   constructor(props) {
     Object.assign(this, props)
@@ -27,6 +27,7 @@ export class FactoryNode {
 
   static async findAll() {
     const response = await axios.get(`/rest/factories`)
-    return response && response.data.data;
+    return response &&
+      response.data.data.map(data => new Factory(data));
   }
 }
