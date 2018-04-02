@@ -21,13 +21,15 @@ const state = store({
   get factories () {
     let factories = []
     const ids = Object.keys(this.factoriesById)
+
+    // Convert the map to an array
     ids.forEach((id) => {
       factories.push(this.factoriesById[id])
     })
 
+    // Sort the array in descending order of created time
     factories = factories.sort((a, b) => {
-      const result = new Date(a._created) < new Date(b._created)
-      return result
+      return new Date(a._created) < new Date(b._created)
     })
 
     return factories;
