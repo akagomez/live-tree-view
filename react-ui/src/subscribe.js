@@ -6,15 +6,14 @@ const sendObject = (obj) => {
   socket.send(JSON.stringify(obj))
 }
 
-// TODO: Remove when finished debugging
-window.socket = socket;
-
 export default (lastUpdated, waitDuration, onUpdate, onError) => {
   let isSubscribed = false;
   let hasErrored = false;
 
   if (socket.readyState !== 1) {
-    onError && onError()
+    setTimeout(() => {
+      onError && onError()
+    }, waitDuration)
     return;
   }
 
