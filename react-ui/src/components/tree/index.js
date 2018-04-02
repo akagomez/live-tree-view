@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { view } from 'react-easy-state'
+
 import CreateFactoryForm from '../create-factory-form/'
 
 import {
@@ -10,7 +12,7 @@ import {
 
 import './style.css';
 
-export default ({
+export default view(({
   children,
   createFactoryFormErrors,
   createFactoryFormIsVisible,
@@ -18,7 +20,9 @@ export default ({
   onUpdateCreateFactoryField,
   onCancelCreateFactoryForm,
   onSubmitCreateFactoryForm,
-  onDestroyChild
+  onDestroyChild,
+  onPromptChildEditForm,
+  onCancelChildEditForm,
 }) => (
   <div className="tree">
 
@@ -58,7 +62,7 @@ export default ({
               <button
                 className="button-feather-icon button-clear"
                 onClick={() => {
-
+                  onPromptChildEditForm(child)
                 }}
               >
                 <EditIcon size="20" />
@@ -74,6 +78,16 @@ export default ({
               >
                 <TrashIcon size="20" />
               </button>
+
+              {child.isEditing &&
+                <CreateFactoryForm
+                  // errors={createFactoryFormErrors}
+                  // onUpdateField={onUpdateCreateFactoryField}
+                  onCancelForm={() => {
+                    onCancelChildEditForm(child)
+                  }}
+                  /*onSubmitForm={onSubmitCreateFactoryForm}*/ />
+              }
 
               <ul>
                 {[...Array(child.numberOfChildren).keys()].map((val, i) => (
@@ -92,4 +106,4 @@ export default ({
       </li>
     </ul>
   </div>
-);
+));

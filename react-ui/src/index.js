@@ -30,6 +30,12 @@ const App = view(() => (
           }}
           onSubmitCreateFactoryForm={() => state.ui.createFactoryForm.submit()}
           onDestroyChild={child => child.destroy()}
+          onPromptChildEditForm={(child) => {
+            child.isEditing = true
+          }}
+          onCancelChildEditForm={(child) => {
+            child.isEditing = false
+          }}
         />
       </div>
     </div>
