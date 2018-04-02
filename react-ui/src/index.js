@@ -59,6 +59,8 @@ const bootstrap = async () => {
       .shift();
   }
 
+  console.log(`Attemting to subscribe from: ${lastUpdated}`)
+
   subscribe(lastUpdated, 1000, (message) => {
 
     const id = message.meta._id

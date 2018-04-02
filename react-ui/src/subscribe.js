@@ -7,6 +7,7 @@ export default (lastUpdated, waitDuration, onUpdate, onRefresh) => {
 
   let errorTimeout;
   let handleRefresh;
+  let refreshHandled = false;
 
   errorTimeout = setTimeout(() => {
     handleRefresh({
@@ -15,9 +16,20 @@ export default (lastUpdated, waitDuration, onUpdate, onRefresh) => {
   }, waitDuration)
 
   handleRefresh = (message) => {
+    // Prevent stampeding refreshes
+    if (refreshHandled) return;
+    refreshHandled = true;
+
+    // Manage expectations
     console.error('Refreshing WebSocket connection due to:', message)
+
+    // Disregard this connection
     socket.close()
+
+    // Cancel the timeout
     clearTimeout(errorTimeout)
+
+    // Have another go at it...
     onRefresh && onRefresh()
   }
 
