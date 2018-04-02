@@ -39,33 +39,33 @@ const bootstrap = async () => {
       .shift();
   }
 
-  subscribe(lastUpdated, 1000, (message) => {
+  // subscribe(lastUpdated, 1000, (message) => {
 
-    const id = message.meta._id
-    const factory = state.factoriesById[id]
+  //   const id = message.meta._id
+  //   const factory = state.factoriesById[id]
 
-    switch (message.type) {
-      case 'NODE_CREATED':
-        state.factories = [].concat(
-          [new Factory(message.meta)],
-          state.factories)
-        break;
-      case 'NODE_UPDATED':
-        Object.assign(factory, message.meta)
-        break;
-      case 'NODE_DESTROYED':
-        state.factories = state.factories
-          .filter((node) => node !== factory)
-        break;
-      default:
-        console.error('Unhandled WS message:', message)
-        break;
-    }
+  //   switch (message.type) {
+  //     case 'NODE_CREATED':
+  //       state.factories = [].concat(
+  //         [new Factory(message.meta)],
+  //         state.factories)
+  //       break;
+  //     case 'NODE_UPDATED':
+  //       Object.assign(factory, message.meta)
+  //       break;
+  //     case 'NODE_DESTROYED':
+  //       state.factories = state.factories
+  //         .filter((node) => node !== factory)
+  //       break;
+  //     default:
+  //       console.error('Unhandled WS message:', message)
+  //       break;
+  //   }
 
-  }, () => {
-    console.error('Unable to subscribe, retrying...')
-    bootstrap()
-  })
+  // }, () => {
+  //   console.error('Unable to subscribe, retrying...')
+  //   bootstrap()
+  // })
 }
 
 const App = view(() => (
