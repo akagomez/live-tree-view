@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import axios from 'axios';
-
 import { view } from 'react-easy-state'
 
 import Header from './components/header';
@@ -19,7 +17,7 @@ const App = view(() => (
       <div className="column">
         <Header />
         <Tree
-          children={state.tree.factoryNodes}
+          children={state.factoryNodes}
           createFactoryFormIsVisible={state.ui.createFactoryForm.isVisible}
           onPromptCreateFactoryForm={() => state.ui.createFactoryForm.show()}
           onCancelCreateFactoryForm={() => {
@@ -34,8 +32,8 @@ const App = view(() => (
           onCancelChildEditForm={(child) => {
             child.isEditing = false
           }}
-          onSubmitChildEditForm={async (child, fields) => {
-            await axios.put(`/rest/factory/${child._id}`, fields)
+          onSubmitChildEditForm={async (child, props) => {
+            await child.save(props)
             child.isEditing = false;
           }}
         />

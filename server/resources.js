@@ -38,15 +38,13 @@ const generateNumbers = (model) => {
 
 module.exports = (app, dispatcher) => {
 
-  // Represent a single "Tree" resource (this app only has one)
-  app.get('/rest/tree/1', async (req, res) => {
+  // Get a list of all factories
+  app.get('/rest/factory', async (req, res) => {
 
     const results = await FactoryNode.find().sort('-_created')
 
     res.json({
-      data: {
-        results
-      }
+      data: results
     })
   });
 

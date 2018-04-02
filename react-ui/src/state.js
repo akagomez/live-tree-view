@@ -1,7 +1,6 @@
 import { store } from 'react-easy-state'
 
 import {
-  Tree,
   FactoryNode
 } from './models'
 
@@ -10,17 +9,15 @@ import subscribe from './subscribe'
 
 const state = store({
   async init () {
-    const tree = await Tree.findOne(1);
+    const factoryNodes = await FactoryNode.findAll();
     let lastUpdated;
 
-    if (tree.results) {
-      const factoryNodes = tree.results.map((node) => {
+    if (factoryNodes) {
+      this.factoryNodes = factoryNodes.map((node) => {
         return new FactoryNode(node)
       })
 
-      this.tree.factoryNodes = factoryNodes
-
-      lastUpdated = factoryNodes
+      lastUpdated = this.factoryNodes
         .map(n => n._updated)
         .sort()
         .reverse()
@@ -34,17 +31,17 @@ const state = store({
       // TODO: Create a lookup map
       let matchingLocalNode;
 
-      state.tree.factoryNodes.forEach((factoryNode, index) => {
+      state.factoryNodes.forEach((factoryNode, index) => {
         if (factoryNode._id === id) {
-          matchingLocalNode = state.tree.factoryNodes[index]
+          matchingLocalNode = state.factoryNodes[index]
         }
       })
 
       switch (message.type) {
         case 'NODE_CREATED':
-          state.tree.factoryNodes = [].concat(
+          state.factoryNodes = [].concat(
             [new FactoryNode(message.meta)],
-            state.tree.factoryNodes)
+            state.factoryNodes)
 
           break;
 
@@ -53,7 +50,7 @@ const state = store({
           break;
 
         case 'NODE_DESTROYED':
-          state.tree.factoryNodes = state.tree.factoryNodes
+          state.factoryNodes = state.factoryNodes
             .filter((node) => node !== matchingLocalNode)
           break;
 
@@ -68,9 +65,7 @@ const state = store({
     })
 
   },
-  tree: {
-    factoryNodes: [],
-  },
+  factoryNodes: [],
   ui: {
     createFactoryForm: {
       isVisible: false,
