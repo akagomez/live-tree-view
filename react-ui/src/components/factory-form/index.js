@@ -4,15 +4,15 @@ import { store, view } from 'react-easy-state'
 
 import './style.css';
 
-class NodeForm extends Component {
+class FactoryForm extends Component {
   form = store({
     errors: [],
     inputs: {}
   })
 
   render () {
-
-    let {
+    const form = this.form
+    const {
       description,
       onCancelForm,
       onSubmitForm,
@@ -21,7 +21,7 @@ class NodeForm extends Component {
     } = this.props
 
     const onChangeFieldValue = (ev) => {
-      this.form.inputs[ev.currentTarget.id] =
+      form.inputs[ev.currentTarget.id] =
         ev.currentTarget.value
     }
 
@@ -34,11 +34,11 @@ class NodeForm extends Component {
         }}
       >
         <fieldset>
-          {this.form.errors && this.form.errors.length > 0 &&
+          {form.errors && form.errors.length > 0 &&
             <div className="errors">
               <span>Submission Errors:</span>
               <ul>
-                {this.form.errors.map((error, index) => (
+                {form.errors.map((error, index) => (
                   <li key={index}>
                     {error}
                   </li>
@@ -103,8 +103,8 @@ class NodeForm extends Component {
               className="button-clear"
               onClick={(ev) => {
                 ev.preventDefault()
-                this.form.inputs = {}
-                this.form.errors = []
+                form.inputs = {}
+                form.errors = []
                 onCancelForm()
               }}
             >
@@ -118,10 +118,10 @@ class NodeForm extends Component {
               onClick={async () => {
                 try {
                   await onSubmitForm(
-                    Object.assign({}, defaultValues, this.form.inputs)
+                    Object.assign({}, defaultValues, form.inputs)
                   )
                 } catch (err) {
-                  this.form.errors = [err.response.data.message]
+                  form.errors = [err.response.data.message]
                 }
               }}
             >
@@ -135,7 +135,7 @@ class NodeForm extends Component {
   }
 }
 
-NodeForm.defaultProps = {
+FactoryForm.defaultProps = {
   defaultValues: {
     name: '',
     numberOfChildren: '',
@@ -144,4 +144,4 @@ NodeForm.defaultProps = {
   }
 }
 
-export default view(NodeForm)
+export default view(FactoryForm)
