@@ -2,6 +2,10 @@
  * Customize Milligram
  **/
 
+a, button {
+  cursor: pointer;
+}
+
 .row {
   max-width: 85rem;
 }
