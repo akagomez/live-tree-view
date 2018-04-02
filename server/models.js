@@ -7,6 +7,7 @@ module.exports = {
       numberOfChildren: Number,
       lowerBound: Number,
       upperBound: Number,
+      _created: { type: Date, default: Date.now },
       _updated: { type: Date, default: Date.now }
     })
   )

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { view } from 'react-easy-state'
 
-import CreateFactoryForm from '../create-factory-form/'
+import FactoryForm from '../factory-form/'
 
 import {
   Plus as PlusIcon,
@@ -14,15 +14,14 @@ import './style.css';
 
 export default view(({
   children,
-  createFactoryFormErrors,
   createFactoryFormIsVisible,
   onPromptCreateFactoryForm,
-  onUpdateCreateFactoryField,
   onCancelCreateFactoryForm,
   onSubmitCreateFactoryForm,
   onDestroyChild,
   onPromptChildEditForm,
   onCancelChildEditForm,
+  onSubmitChildEditForm
 }) => (
   <div className="tree">
 
@@ -43,11 +42,11 @@ export default view(({
         </button>
 
         {createFactoryFormIsVisible &&
-          <CreateFactoryForm
-            errors={createFactoryFormErrors}
-            onUpdateField={onUpdateCreateFactoryField}
+          <FactoryForm
             onCancelForm={onCancelCreateFactoryForm}
-            onSubmitForm={onSubmitCreateFactoryForm} />
+            onSubmitForm={onSubmitCreateFactoryForm}
+            description="Create a new factory node."
+            submitButtonText="Create Factory" />
         }
 
         <ul>
@@ -61,6 +60,7 @@ export default view(({
 
               <button
                 className="button-feather-icon button-clear"
+                disabled={child.isEditing}
                 onClick={() => {
                   onPromptChildEditForm(child)
                 }}
@@ -80,13 +80,21 @@ export default view(({
               </button>
 
               {child.isEditing &&
-                <CreateFactoryForm
-                  // errors={createFactoryFormErrors}
-                  // onUpdateField={onUpdateCreateFactoryField}
+                <FactoryForm
+                  defaultValues={{
+                    name: child.name,
+                    numberOfChildren: child.numberOfChildren,
+                    lowerBound: child.lowerBound,
+                    upperBound: child.upperBound
+                  }}
                   onCancelForm={() => {
                     onCancelChildEditForm(child)
                   }}
-                  /*onSubmitForm={onSubmitCreateFactoryForm}*/ />
+                  onSubmitForm={(fields) => {
+                    onSubmitChildEditForm(child, fields)
+                  }}
+                  description={`Update the "${child.name}" factory node.`}
+                  submitButtonText="Update Factory" />
               }
 
               <ul>

@@ -10,14 +10,7 @@ export class Tree {
 
 export class FactoryNode {
   constructor(props) {
-    this.set(props)
-  }
-  set (props) {
-    const node = this;
-
-    Object.keys(props).forEach((key) => {
-      node[key] = props[key]
-    })
+    Object.assign(this, props)
   }
   async save () {
 

@@ -49,7 +49,7 @@ const state = store({
           break;
 
         case 'NODE_UPDATED':
-          matchingLocalNode.set(message.meta)
+          Object.assign(matchingLocalNode, message.meta)
           break;
 
         case 'NODE_DESTROYED':
@@ -74,27 +74,19 @@ const state = store({
   ui: {
     createFactoryForm: {
       isVisible: false,
-      errors: [],
-      fields: {},
       show () {
         this.isVisible = true
       },
       hide () {
         this.isVisible = false;
       },
-      async submit () {
-        var response;
-        var factoryNode =
-          new FactoryNode(state.ui.createFactoryForm.fields)
+      async submit (inputs) {
 
-        try {
+        let response;
+        let factoryNode =
+          new FactoryNode(inputs)
 
-          response = await factoryNode.save()
-        } catch (err) {
-          // NOTE: Updating an existing array does not
-          // trigger a re-render
-          this.errors = [err.response.data.message];
-        }
+        response = await factoryNode.save()
 
         // Reset the form
         if (response) {
