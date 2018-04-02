@@ -66,6 +66,7 @@ class FactoryForm extends Component {
               <label htmlFor="numberOfChildren">Number of Children:</label>
               <input
                 type="number"
+                pattern="\d*"
                 min="1"
                 max="15"
                 placeholder="1-15"
@@ -78,6 +79,7 @@ class FactoryForm extends Component {
               <label htmlFor="lowerBound">Lower Bound:</label>
               <input
                 type="number"
+                pattern="\d*"
                 min="1"
                 placeholder="100"
                 id="lowerBound"
@@ -89,6 +91,7 @@ class FactoryForm extends Component {
               <label htmlFor="upperBound">Upper Bound:</label>
               <input
                 type="number"
+                pattern="\d*"
                 min="1"
                 placeholder="999"
                 id="upperBound"
