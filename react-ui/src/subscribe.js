@@ -1,62 +1,58 @@
 const protocol = parseInt(process.env.REACT_APP_USE_SECURE_WEBSOCKETS, 10) ?
     'wss' : 'ws';
-const socket = new WebSocket(`${protocol}://${window.location.host}/ws`)
 
-const sendObject = (obj) => {
-  socket.send(JSON.stringify(obj))
-}
+export default (lastUpdated, waitDuration, onUpdate, onRefresh) => {
 
-export default (lastUpdated, waitDuration, onUpdate, onError) => {
-  let isSubscribed = false;
-  let hasErrored = false;
+  const socket = new WebSocket(`${protocol}://${window.location.host}/ws`)
 
-  if (socket.readyState !== 1) {
-    setTimeout(() => {
-      onError && onError()
-    }, waitDuration)
-    return;
+  let errorTimeout;
+  let handleRefresh;
+
+  errorTimeout = setTimeout(() => {
+    handleRefresh({
+      message: `No confirmation recieved prior to ${waitDuration}`
+    })
+  }, waitDuration)
+
+  handleRefresh = (message) => {
+    console.error('Refreshing WebSocket connection due to:', message)
+    socket.close()
+    clearTimeout(errorTimeout)
+    onRefresh && onRefresh()
   }
 
-  sendObject({
-    type: 'REQUEST_SUBSCRIPTION',
-    meta: {
-      lastUpdated
-    }
-  })
+  socket.onerror = handleRefresh
+  socket.onclose = handleRefresh
+
+  socket.onopen = () => {
+    console.log('Sending WebSocket subscription request...')
+    socket.send(JSON.stringify({
+      type: 'REQUEST_SUBSCRIPTION',
+      meta: {
+        lastUpdated
+      }
+    }))
+  }
 
   socket.onmessage = (event) => {
-
     let message = JSON.parse(event.data)
 
-    console.log('Recieved WS Message:', message)
+    console.log('Recieved WebSocket message:', message)
 
     switch(message.type) {
       case 'RECOMMEND_REFETCH':
-        onError && onError({
-          message: ''
+        handleRefresh({
+          message: 'Local state is out-of-sync'
         })
-        hasErrored = true; // Don't run the timeout onError
         break;
 
       case 'SUBSCRIPTION_CONFIRMED':
-        isSubscribed = true;
+        clearTimeout(errorTimeout)
         break;
 
       default:
-        if (isSubscribed) {
-          onUpdate(message)
-        }
+        onUpdate(message)
         break;
     }
   };
-
-  if (waitDuration && hasErrored) {
-    setTimeout(() => {
-      if (!isSubscribed) {
-        onError && onError({
-          message: `No confirmation recieved prior to ${waitDuration}`
-        })
-      }
-    }, waitDuration)
-  }
 }

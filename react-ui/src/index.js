@@ -63,8 +63,13 @@ const bootstrap = async () => {
     }
 
   }, () => {
-    console.error('Unable to subscribe, retrying...')
-    bootstrap()
+    const retryInterval = 1000
+
+    setTimeout(() => {
+      bootstrap()
+    }, retryInterval)
+
+    console.error(`Resubscribing in ${retryInterval}ms...`)
   })
 }
 
