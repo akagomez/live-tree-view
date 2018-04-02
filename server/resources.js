@@ -4,6 +4,38 @@ const {
   FactoryNode
 } = require('./models')
 
+const factoryValidation = Joi.object().keys({
+  name: Joi.string().required().regex(/^[\w\-\s]+$/),
+  numberOfChildren: Joi.number()
+    .required()
+    .integer()
+    .min(1)
+    .max(15),
+  lowerBound: Joi.number()
+    .min(1)
+    .required()
+    .integer(),
+  upperBound: Joi.number()
+    .min(1)
+    .greater(Joi.ref('lowerBound'))
+    .required()
+    .integer(),
+})
+
+// TODO: Figure out how to move this into the model
+const generateNumbers = (model) => {
+  const numbers = []
+  const lower = model.lowerBound;
+  const upper = model.upperBound;
+
+  for (let i = 0; i < model.numberOfChildren; i++) {
+    numbers[i] =
+      Math.round(lower + (Math.random() * (upper - lower)))
+  }
+
+  return numbers;
+}
+
 module.exports = (app, dispatcher) => {
 
   // Represent a single "Tree" resource (this app only has one)
@@ -20,26 +52,15 @@ module.exports = (app, dispatcher) => {
 
   // Create Factory Nodes
   app.post('/rest/factory', celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().regex(/^[\w\-\s]+$/),
-      numberOfChildren: Joi.number()
-        .required()
-        .integer()
-        .min(1)
-        .max(15),
-      lowerBound: Joi.number().required().integer(),
-      upperBound: Joi.number().required().integer(),
-    })
+    body: factoryValidation
   }), async (req, res) => {
 
-    console.log(req.body)
-
-    const createdFactoryNode = new FactoryNode(req.body)
+    const createdFactoryNode = new FactoryNode(Object.assign({
+      numbers: generateNumbers(req.body)
+    }, req.body))
 
     createdFactoryNode.save((err, instance) => {
       if (err) return console.error(err);
-
-      console.log(instance)
 
       res.status(201)
       res.json({
@@ -60,8 +81,6 @@ module.exports = (app, dispatcher) => {
       id: Joi.string().required().regex(/^[\w]+$/)
     })
   }), async (req, res) => {
-
-    console.log(req.params)
 
     var response
 
@@ -92,24 +111,16 @@ module.exports = (app, dispatcher) => {
     params: Joi.object().keys({
       id: Joi.string().required().regex(/^[\w]+$/)
     }),
-    body: Joi.object().keys({
-      name: Joi.string().required().regex(/^[\w\-\s]+$/),
-      numberOfChildren: Joi.number()
-        .required()
-        .integer()
-        .min(1)
-        .max(15),
-      lowerBound: Joi.number().required().integer(),
-      upperBound: Joi.number().required().integer(),
-    })
+    body: factoryValidation
   }), async (req, res) => {
 
     const response = await FactoryNode.update({
       _id: req.params.id
-    }, Object.assign({
+    }, Object.assign({}, req.body, {
+      numbers: generateNumbers(req.body),
       _updated: new Date()
-    }, req.body))
-    console.log(response)
+    }))
+
     if (response && response.ok && response.n > 0) {
 
       const instance = await FactoryNode.findById(req.params.id)
@@ -121,7 +132,7 @@ module.exports = (app, dispatcher) => {
 
       dispatcher.send({
         type: 'NODE_UPDATED',
-        meta: instance
+        meta: instance.toObject()
       })
 
     } else {

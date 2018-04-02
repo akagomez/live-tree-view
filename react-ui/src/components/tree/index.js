@@ -53,7 +53,9 @@ export default view(({
           {children && children.map((child) => (
             <li key={child._id}>
               <span className="node-name">
-                {child.name} ({child.lowerBound}-{child.upperBound})
+                {child.name} Factory
+                {' '}
+                <code>[{child.lowerBound}...{child.upperBound}]</code>
               </span>
 
               {' '}
@@ -90,18 +92,18 @@ export default view(({
                   onCancelForm={() => {
                     onCancelChildEditForm(child)
                   }}
-                  onSubmitForm={(fields) => {
-                    onSubmitChildEditForm(child, fields)
+                  onSubmitForm={async (fields) => {
+                    await onSubmitChildEditForm(child, fields)
                   }}
                   description={`Update the "${child.name}" factory node.`}
                   submitButtonText="Update Factory" />
               }
 
               <ul>
-                {[...Array(child.numberOfChildren).keys()].map((val, i) => (
+                {child.numbers.map((number, i) => (
                   <li key={i}>
                     <span className="node-name">
-                      Child {i}
+                      Child {number}
                     </span>
                   </li>
                 ))}
