@@ -68,15 +68,6 @@ const bootstrap = async () => {
   })
 }
 
-(async () => {
-  try {
-    await bootstrap()
-  } catch(e) {
-    // TODO: Remove once finished debugging mobile
-    alert(e)
-  }
-})()
-
 const App = view(() => (
   <div className="container">
     <div className="row">
@@ -101,5 +92,6 @@ const App = view(() => (
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root')
+  document.getElementById('root'),
+  () => bootstrap()
 );
