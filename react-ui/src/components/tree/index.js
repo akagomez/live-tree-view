@@ -13,8 +13,7 @@ import {
 import './style.css';
 
 const state = store({
-  isCreateFormVisible: false,
-  editedChildId: undefined
+  focusedForm: undefined
 })
 
 export default view(({
@@ -34,24 +33,23 @@ export default view(({
         <button
           className="button-feather-icon button-clear"
           onClick={() => {
-            state.isCreateFormVisible = true
-            state.editedChildId = undefined
+            state.focusedForm = 'create'
           }}
-          disabled={state.isCreateFormVisible}
+          disabled={state.focusedForm === 'create'}
         >
           <PlusIcon size="20" />
         </button>
 
-        {state.isCreateFormVisible &&
+        {state.focusedForm === 'create' &&
           <FactoryForm
             description="Create a new factory node."
             submitButtonText="Create Factory"
             onCancelForm={() => {
-              state.isCreateFormVisible = false
+              state.focusedForm = undefined
             }}
             onSubmitForm={async (props) => {
               await onSubmitCreateForm(props)
-              state.isCreateFormVisible = false;
+              state.focusedForm = undefined;
             }}
           />
         }
@@ -66,10 +64,9 @@ export default view(({
 
               <button
                 className="button-feather-icon button-clear"
-                disabled={state.editedChildId === child._id}
+                disabled={state.focusedForm === child._id}
                 onClick={() => {
-                  state.editedChildId = child._id
-                  state.isCreateFormVisible = false
+                  state.focusedForm = child._id
                 }}
               >
                 <EditIcon size="20" />
@@ -82,7 +79,7 @@ export default view(({
                 <TrashIcon size="20" />
               </button>
 
-              {state.editedChildId === child._id &&
+              {state.focusedForm === child._id &&
                 <FactoryForm
                   description={`Update the "${child.name}" factory node.`}
                   submitButtonText="Update Factory"
@@ -92,7 +89,7 @@ export default view(({
                     lowerBound: child.lowerBound,
                     upperBound: child.upperBound
                   }}
-                  onCancelForm={() => state.editedChildId = undefined}
+                  onCancelForm={() => state.focusedForm = undefined}
                   onSubmitForm={async (props) => {
                     await onSubmitEditForm(child, props)
                     state.editedChildId = undefined
