@@ -1,10 +1,18 @@
 const { celebrate, Joi, errors } = require('celebrate');
 
 const {
-  FactoryNode
+  Factory
 } = require('./models')
 
-const factoryValidation = Joi.object().keys({
+/**
+ * Request Validation
+ **/
+
+const paramsValidation = Joi.object().keys({
+  id: Joi.string().required().regex(/^[\w]+$/)
+})
+
+const bodyValidation = Joi.object().keys({
   name: Joi.string().required().regex(/^[\w\-\s]+$/),
   numberOfChildren: Joi.number()
     .required()
@@ -22,6 +30,10 @@ const factoryValidation = Joi.object().keys({
     .integer(),
 })
 
+/**
+ * Utilities
+ **/
+
 // TODO: Figure out how to move this into the model
 const generateNumbers = (model) => {
   const numbers = []
@@ -36,29 +48,38 @@ const generateNumbers = (model) => {
   return numbers;
 }
 
+/**
+ * HTTP Endpoints
+ **/
+
 module.exports = (app, dispatcher) => {
 
-  // Get a list of all factories
-  app.get('/rest/factory', async (req, res) => {
-
-    const results = await FactoryNode.find().sort('-_created')
+  /**
+   * List all Factories
+   **/
+  app.get('/rest/factories', async (req, res) => {
+    const results = await Factory.find().sort('-_created')
 
     res.json({
       data: results
     })
   });
 
-  // Create Factory Nodes
-  app.post('/rest/factory', celebrate({
-    body: factoryValidation
+  /**
+   * Create a Factory
+   **/
+  app.post('/rest/factories', celebrate({
+    body: bodyValidation
   }), async (req, res) => {
 
-    const createdFactoryNode = new FactoryNode(Object.assign({
+    const createdFactory = new Factory(Object.assign({
       numbers: generateNumbers(req.body)
     }, req.body))
 
-    createdFactoryNode.save((err, instance) => {
-      if (err) return console.error(err);
+    createdFactory.save((err, instance) => {
+      if (err) {
+        res.sendStatus(400)
+      };
 
       res.status(201)
       res.json({
@@ -69,26 +90,19 @@ module.exports = (app, dispatcher) => {
         type: 'NODE_CREATED',
         meta: instance.toObject()
       })
-
     })
   });
 
-  // Delete Factory Nodes
-  app.delete('/rest/factory/:id', celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().regex(/^[\w]+$/)
-    })
+  /**
+   * Delete a Factory
+   **/
+  app.delete('/rest/factories/:id', celebrate({
+    params: paramsValidation
   }), async (req, res) => {
 
-    var response
-
-    try {
-      response = await FactoryNode.deleteOne({
-        _id: req.params.id
-      })
-    } catch (err) {
-      throw err
-    }
+    const response = await Factory.deleteOne({
+      _id: req.params.id
+    })
 
     if (response && response.ok && response.n > 0) {
       res.sendStatus(204)
@@ -104,15 +118,15 @@ module.exports = (app, dispatcher) => {
     }
   });
 
-  // Update Factory Nodes
-  app.put('/rest/factory/:id', celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().regex(/^[\w]+$/)
-    }),
-    body: factoryValidation
+  /**
+   * Update a Factory
+   **/
+  app.put('/rest/factories/:id', celebrate({
+    params: paramsValidation,
+    body: bodyValidation
   }), async (req, res) => {
 
-    const response = await FactoryNode.update({
+    const response = await Factory.update({
       _id: req.params.id
     }, Object.assign({}, req.body, {
       numbers: generateNumbers(req.body),
@@ -120,8 +134,7 @@ module.exports = (app, dispatcher) => {
     }))
 
     if (response && response.ok && response.n > 0) {
-
-      const instance = await FactoryNode.findById(req.params.id)
+      const instance = await Factory.findById(req.params.id)
 
       res.status(201)
       res.json({

@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 
 const {
-  FactoryNode
+  Factory
 } = require('./models')
 
 const DISPATCH_POOL = []
@@ -26,7 +26,7 @@ module.exports = (wss) => {
           // Get all the models that have been updated
           // after the client's most recently updated
           // client-side model
-          var result = await FactoryNode.findOne({
+          var result = await Factory.findOne({
             _updated: { $gt: message.meta.lastUpdated }
           })
 

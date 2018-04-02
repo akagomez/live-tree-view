@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 module.exports = {
-  FactoryNode: mongoose.model('FactoryNode',
+  Factory: mongoose.model('Factories',
     mongoose.Schema({
       name: String,
       numberOfChildren: Number,

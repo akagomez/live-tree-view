@@ -17,16 +17,16 @@ export class FactoryNode {
     const props = Object.assign({}, currentProps, newProps)
 
     return this._id ?
-      await axios.put(`/rest/factory/${this._id}`, props) :
-      await axios.post('/rest/factory', props);
+      await axios.put(`/rest/factories/${this._id}`, props) :
+      await axios.post('/rest/factories', props);
   }
 
   async destroy () {
-    return await axios.delete(`/rest/factory/${this._id}`);
+    return await axios.delete(`/rest/factories/${this._id}`);
   }
 
   static async findAll() {
-    const response = await axios.get(`/rest/factory`)
+    const response = await axios.get(`/rest/factories`)
     return response && response.data.data;
   }
 }
